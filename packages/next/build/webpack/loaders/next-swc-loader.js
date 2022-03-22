@@ -88,6 +88,9 @@ async function loaderTransform(parentTrace, source, inputSourceMap) {
   const swcSpan = parentTrace.traceChild('next-swc-transform')
   return swcSpan.traceAsyncFn(() =>
     transform(source, programmaticOptions).then((output) => {
+      if (output.eliminatedPackages && this.eliminatedPackages) {
+        this.eliminatedPackages.push(...JSON.parse(output.eliminatedPackages))
+      }
       return [output.code, output.map ? JSON.parse(output.map) : undefined]
     })
   )
